@@ -1,0 +1,10 @@
+
+fs_device
+fs_mountpoint
+fs_lv_name
+fs_vg_name
+fs_size
+fs_fstype
+fs_mountpoint
+fs_mountoptions
+fs_selinux_type

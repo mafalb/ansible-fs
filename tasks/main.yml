@@ -1,0 +1,39 @@
+---
+
+- name: logical volume {{ fs_device }}
+  lvol:
+    lv: "{{ fs_lv_name }}"
+    vg: "{{ fs_vg_name }}
+    size: "{{ fs_size }}"
+
+- name: filesystem {{ fs_device }}
+  filesystem:
+    dev: /dev/{{ fs_vg_name }}/{{ fs_lv_name }}
+    fstype: "{{ fs_fstype }}"
+
+- name: mount point
+  file:
+    path: "{{ fs_mountpoint }}"
+    state: directory
+
+- name: mount {{ fs_mountpoint }}
+  mount:
+    src: /dev/{{ fs_vg_name }}/{{ fs_lv_name }}
+    path: "{{ fs_mountpoint }}"
+    state: mounted
+    fstype: "{{ fs_fstype }}"
+    opts: "{{ fs_mountoptions }}"
+
+- name: selinux type of {{ fs_mountpoint }}
+  file:
+    path: "{{ fs_mountpoint }}"
+    state: directory
+    setype: "{{ fs_selinux_type }}"
+  when: fs_selinux_type
+
+- name: resize {{ fs_mountpoint }}
+  filesystem:
+    dev: /dev/{{ fs_vg_name }}/{{ fs_lv_name }}
+    fstype: "{{ fs_fstype }}"
+    resizefs: yes
+    shrink: no
