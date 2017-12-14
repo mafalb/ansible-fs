@@ -1,12 +1,13 @@
 ---
 
-- name: logical volume {{ fs_device }}
+- name: logical volume {{ fs_mountpoint }}
   lvol:
     lv: "{{ fs_lv_name }}"
-    vg: "{{ fs_vg_name }}
+    vg: "{{ fs_vg_name }}"
     size: "{{ fs_size }}"
+    shrink: no
 
-- name: filesystem {{ fs_device }}
+- name: filesystem {{ fs_mountpoint }}
   filesystem:
     dev: /dev/{{ fs_vg_name }}/{{ fs_lv_name }}
     fstype: "{{ fs_fstype }}"
@@ -29,11 +30,10 @@
     path: "{{ fs_mountpoint }}"
     state: directory
     setype: "{{ fs_selinux_type }}"
-  when: fs_selinux_type
+  when: fs_selinux_type is defined
 
 - name: resize {{ fs_mountpoint }}
   filesystem:
     dev: /dev/{{ fs_vg_name }}/{{ fs_lv_name }}
     fstype: "{{ fs_fstype }}"
     resizefs: yes
-    shrink: no
