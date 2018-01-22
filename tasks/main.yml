@@ -17,6 +17,11 @@
     path: "{{ fs_mountpoint }}"
     state: directory
 
+# would it be better to use
+# /dev/mapper/xxx
+# ?
+# however, i have trouble with vg names containing a dash
+#
 - name: mount {{ fs_mountpoint }}
   mount:
     src: /dev/{{ fs_vg_name }}/{{ fs_lv_name }}
