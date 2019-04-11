@@ -7,9 +7,11 @@
     size: "{{ fs_size }}"
     shrink: no
 
+# dashes in vg and lv names are doubled
+#
 - name: filesystem {{ fs_mountpoint }}
   filesystem:
-    dev: /dev/{{ fs_vg_name }}/{{ fs_lv_name }}
+    dev: /dev/mapper/{{ fs_vg_name|replace("-","--") }}-{{ fs_lv_name|replace("-","--") }}
     fstype: "{{ fs_fstype }}"
 
 - name: mount point
@@ -17,14 +19,11 @@
     path: "{{ fs_mountpoint }}"
     state: directory
 
-# would it be better to use
-# /dev/mapper/xxx
-# ?
-# however, i have trouble with vg names containing a dash
+# dashes in vg and lv names are doubled
 #
 - name: mount {{ fs_mountpoint }}
   mount:
-    src: /dev/{{ fs_vg_name }}/{{ fs_lv_name }}
+    src: /dev/mapper/{{ fs_vg_name|replace("-","--") }}-{{ fs_lv_name|replace("-","--") }}
     path: "{{ fs_mountpoint }}"
     state: mounted
     fstype: "{{ fs_fstype }}"
@@ -37,8 +36,10 @@
     setype: "{{ fs_selinux_type }}"
   when: fs_selinux_type is defined
 
+# dashes in vg and lv names are doubled
+#
 - name: resize {{ fs_mountpoint }}
   filesystem:
-    dev: /dev/{{ fs_vg_name }}/{{ fs_lv_name }}
+    dev: /dev/mapper/{{ fs_vg_name|replace("-","--") }}-{{ fs_lv_name|replace("-","--") }}
     fstype: "{{ fs_fstype }}"
     resizefs: yes
